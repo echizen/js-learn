@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>hi js</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  </head>
+
+  <body>
+    <p>JS实现jquery的index功能</p>
+    <ul id="myul">
+      <li>click</li>
+      <li>click</li>
+      <li>click</li>
+      <li>click</li>
+      <li>click</li>
+    </ul>
+    <script type="text/javascript">
+
+    var indexFun = [];
+    indexFun[0] = function(){
+      // document.getElementById("myul").children不是真正的数组，没有forEach方法，调用[].slice.call是为了获得数组的方法。document.getElementById("myul").children中的每个元素都是对象，slice是浅拷贝，所以返回的新数组中每个元素都是对原对象的引用。
+      [].slice.call(document.getElementById("myul").children).forEach(function(el, index){
+          (function(index){
+              el.addEventListener("click", function(){
+                  console.log(index);
+              });
+          }(index));
+      });
+    }
+
+    indexFun[1] = function(){
+      var liNode = document.getElementsByTagName("li");
+      for(var i=1;i<liNode.length;i++){
+        liNode[i].onclick = (function(j){
+          // 不return function,则会立即执行
+          return function(){
+            console.log(j);
+          }
+        })(i)
+      }
+    } 
+
+    indexFun[2] = function(){
+      var liNode = document.getElementsByTagName("li");
+      for(var i=0;i<liNode.length;i++){
+        (function(j){
+          liNode[j].addEventListener('click',function(){
+            console.log(j);
+          },false);
+        })(i)
+      }
+    } 
+    
+    indexFun[3] = function(){
+      // 兼容性提示：注意ES5的forEach方法的兼容性
+      var nodeList = document.getElementsByTagName("li") ,
+          // Array(nodeList.length+1)=[undefined × 6],forEach 方法按升序为数组中含有效值的每一项执行一次callback 函数，那些已删除（使用delete方法等情况）或者从未赋值的项将被跳过（但不包括哪些值为 undefined 的项）。
+           arr = Array(nodeList.length+1).join("*").split("") ;
+      arr.forEach(function(val,i){
+           nodeList[i].addEventListener("click", function() {
+               console.log(i) ;
+           }, false);
+      })
+    }
+
+    indexFun[4] = function(){
+      var nodeList = document.getElementsByTagName("li");
+      for (var i = 0; i < nodeList.length; i++) {
+         nodeList[i].setAttribute("data-i",i) ;
+         nodeList[i].addEventListener("click", function(e) {
+             console.log(this.getAttribute("data-i"))
+         }, false);
+      }
+    }
+
+    indexFun[5] = function(){
+      // 兼容性提示：注意HTML5 data api的兼容性
+      var nodeList = document.getElementsByTagName("li");
+      for (var i = 0; i < nodeList.length; i++) {
+         nodeList[i].dataset["i"] = i ;
+         nodeList[i].addEventListener("click", function(e) {
+             console.log(this.dataset["i"])
+         }, false);
+      }
+    }
+
+    indexFun[6] = function(){
+      var nodeList = document.getElementsByTagName('li');
+      for (var i = 0; i < nodeList.length; i++) {
+         nodeList[i].index = i ;
+         nodeList[i].addEventListener("click", function() {
+             console.log(this.index)
+         }, false);
+      }
+    }
+
+    indexFun[7]=function(){
+      // 兼容性提示：注意ES5的字符串的indexOf方法的兼容性
+      // 兼容性提示：DOM对象和JS在低版本IE是无法互相转化的
+      var nodeList = document.getElementsByTagName('li') ,
+          arrNodes = Array.prototype.slice.call(nodeList) ,
+          onclickfunc = function(evt){
+              console.log( arrNodes.indexOf(evt.target) )
+          } ;
+
+      for( var i = 0 ; i < arrNodes.length ; i ++ ) {
+          arrNodes[i].onclick = onclickfunc ;
+      }
+    } 
+
+    indexFun[8]=function(){
+      // 兼容性提示：注意ES5的indexOf方法的兼容性
+      // 兼容性提示：DOM对象和JS在低版本IE是无法互相转化的
+      var nodeList = document.getElementsByTagName('li') ,
+          arrNodes = Array.prototype.slice.call(nodeList) ,
+          nodeUls = document.getElementsByTagName('ul') ;
+
+      nodeUls[0].addEventListener("click",function(evt){
+          alert(arrNodes.indexOf(evt.target))
+      },false);
+    }
+
+    indexFun[0]();  
+    </script>
+  </body>
+</html>
