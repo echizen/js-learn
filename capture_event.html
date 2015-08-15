@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>事件捕获</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  </head>
+
+  <body>
+    <h3>事件捕获</h3>
+    <p>捕获事件应用场景：有一些事件不能通过冒泡传递，只能通过捕获，如focus,blur</p>
+    <p><strong>不是说在事件绑定时addEventListener的第三个参数只能设置成true才能绑定，而是只能设置成true，才能传播。否则可以给当前元素绑上事件，却无法传播</strong></p>
+    <button>添加<input class="d1" value="1"></button>
+    <script type="text/javascript" >
+      var highlightThis = function(event) {
+        var target = event.target?event.target:event.srcElement;
+        console.log(target);
+        // event.stopPropagation?event.stopPropagation():event.cancleBubble=true;
+      }
+      var divs = document.getElementsByTagName('button');
+      for(var i=0; i<divs.length; i++) {
+        divs[i].addEventListener("focus", highlightThis, true);
+      }
+
+      var input = document.getElementsByTagName('input');
+      for(var i=0; i<input.length; i++) {
+        input[i].addEventListener("focus", highlightThis, true);
+      }
+    </script>
+  </body>
+</html>
