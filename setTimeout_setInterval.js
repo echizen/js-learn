@@ -32,8 +32,6 @@ window.setInterval = function (vCallback, nDelay /*, argumentToPass1, argumentTo
   } : vCallback, nDelay);
 };
 
-var nativeST = window.setTimeout;
-
 /*
   test:
   myArray = ["zero", "one", "two"];

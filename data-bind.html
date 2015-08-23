@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>hi js</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  </head>
+
+  <body onload="init()">
+    <h3>数据双向绑定的简单实现</h3>
+
+    <p>我们做了一些双向绑定的事情。从两个按钮的点击到数据的变更，这个很好理解，但我们没有直接使用DOM的onclick方法，而是搞了一个ng-click，然后在bind里面把这个ng-click对应的函数拿出来，绑定到onclick的事件处理函数中。为什么要这样呢？因为数据虽然变更了，但是还没有往界面上填充，我们需要在此做一些附加操作。</p>
+
+    <p>从另外一个方面看，当数据变更的时候，需要把这个变更应用到界面上，也就是那三个span里。但由于Angular使用的是脏检测，意味着当改变数据之后，你自己要做一些事情来触发脏检测，然后再应用到这个数据对应的DOM元素上。问题就在于，怎样触发脏检测？什么时候触发？</p>
+
+    <p>我们知道，一些基于setter的框架，它可以在给数据设值的时候，对DOM元素上的绑定变量作重新赋值。脏检测的机制没有这个阶段，它没有任何途径在数据变更之后立即得到通知，所以只能在每个事件入口中手动调用apply()，把数据的变更应用到界面上。在真正的Angular实现中，这里先进行脏检测，确定数据有变化了，然后才对界面设值。</p>
+
+    <p>所以，我们在ng-click里面封装真正的click，最重要的作用是为了在之后追加一次apply()，把数据的变更应用到界面上去。
+
+    <p>那么，为什么在ng-click里面调用$digest的话，会报错呢？因为Angular的设计，同一时间只允许一个$digest运行，而ng-click这种内置指令已经触发了$digest，当前的还没有走完，所以就出错了。</p>
+
+        <button ng-click="inc">
+            increase 1
+        </button>
+        <button ng-click="inc2">
+            increase 2
+        </button>
+        <span style="color:red" ng-bind="counter"></span>
+        <span style="color:blue" ng-bind="counter"></span>
+        <span style="color:green" ng-bind="counter"></span>
+
+        <p>原文链接：<a href="https://github.com/xufei/blog/issues/10">Angular沉思录（一）数据绑定</a></p>
+
+        <script type="text/javascript">
+            /* 数据模型区开始 */
+            var counter = 0;
+
+            function inc() {
+                counter++;
+            }
+
+            function inc2() {
+                counter+=2;
+            }
+            /* 数据模型区结束 */
+
+            /* 绑定关系区开始 */
+            function init() {
+                bind();
+            }
+
+            function bind() {
+                var list = document.querySelectorAll("[ng-click]");
+                for (var i=0; i<list.length; i++) {
+                    list[i].onclick = (function(index) {
+                        return function() {
+                            window[list[index].getAttribute("ng-click")]();
+                            apply();
+                        };
+                    })(i);
+                }
+            }
+
+            function apply() {
+                var list = document.querySelectorAll("[ng-bind='counter']");
+                for (var i=0; i<list.length; i++) {
+                    list[i].innerHTML = counter;
+                }
+            }
+            /* 绑定关系区结束 */
+        </script>
+  </body>
+</html>
