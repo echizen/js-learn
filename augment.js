@@ -1,4 +1,7 @@
 /* The augment function returns either a function or an object. If you define a constructor property on the prototype then it returns the constructor. Otherwise it returns the prototype
+ *
+ ** https://github.com/javascript/augment
+ *
  ** module pattern：如果没有在augment内部定义this.constructor，augment会返回一个原型包括augment第一个参数下属性的实例化后的新对象
  *
  ** 如果定义了constructor，augment将返回原型指向augment第一个参数的constructor构造器
@@ -31,7 +34,7 @@
 
         // 供extend调用为之前生成Factory{}对象的属性上添加原型属性
         var constructor = prototype.constructor;
-        // 将构造器的原型指向实例（新生成的Factory{}，并返回构造器.prototype.constructor.prototype = prototype 
+        // 将构造器的原型指向实例（新生成的Factory{}，并返回构造器。prototype.constructor.prototype = prototype 
         // constructor.prototype本来指向Circle.extend.constructor = { constructor: function (x, y, r),__proto__: Object}，且无限循环，从properties拷贝而来
         constructor.prototype = prototype;
         return constructor;
